@@ -3,8 +3,9 @@ Math 590
 Project 2
 Fall 2018
 
-Rijish Ganguly
-Date:
+Partner1: Rijish Ganguly rg239
+Partner2: Jonti Talukdar jt29
+Date: November 16th, 2018
 """
 
 # Import math.
@@ -28,60 +29,62 @@ def bdfs(maze, alg):
         raise Exception('Incorrect alg! Need BFS or DFS!')
 
     ##### Your implementation goes here. #####
-    s = Stack()
-    q = Queue()
-    dfs_path = []
-    bfs_path = []
+    s = Stack() #Create a stack for D
+    q = Queue() #Create a Queue for BFS
+    dfs_path = [] #Create an empty list to store the path for DFS
+    bfs_path = [] #Create an empty list to store the path for BFS
 
     #Exploring all possible paths using the DFS approach
-    if alg == 'DFS':
-      for vertex in maze.adjList:
-        vertex.visited = False
-        vertex.prev = None  
-      s.push(maze.start)
-      while s.isEmpty() != True:
-        current = s.pop()
-        if current.visited == True:
-          continue
-        current.visited = True
-        #path.append(current.rank)
-        for neighbor in current.neigh:
-          if neighbor.visited != True:
-            s.push(neighbor)
-            neighbor.prev = current
+    if alg == 'DFS': #if the chosen algorithm is DFS
+      for vertex in maze.adjList:   #For every vertex in the adjacency list of the maze 
+        vertex.visited = False     #Set the visited flag as false as no vertex has been visited till now
+        vertex.prev = None         #There is no path at this point, hence no previous vertex
+      s.push(maze.start)   #Now we push the starting point of the maze onto our data structure and need to see if a path exits
+      while s.isEmpty() != True:  #While the stack is not empty
+        current = s.pop()  #Get the current vertex
+        if current.visited == True: #If the boolean flag of the current vertex is already true
+          continue #go to next iteration
+        current.visited = True #Set the boolean flag as true
+    
+        for neighbor in current.neigh: #For all the neighbouring vertices of the current vertex object
+          if neighbor.visited != True: #if the neighbours haven't been visited yet
+            s.push(neighbor)   #Push neighbour onto the stack
+            neighbor.prev = current #Record where we came from
       
-      #Once Traversals complete, start from exit and backtrace to start.
+      #Once Traversal is complete, start from exit and backtrace to start.
       node = maze.exit   
-      while node.isEqual(maze.start) != True:
-        dfs_path.insert(0,node.rank)
-        node = node.prev
+      while node.isEqual(maze.start) != True: #While we havent reached the start of the maze
+        dfs_path.insert(0,node.rank) #start inserting the node ranks
+        node = node.prev #update for the loop
       dfs_path.insert(0,node.rank)  
 
     #Exploring all possible paths using the BFS approach 
-    elif alg == 'BFS':
-      for vertex in maze.adjList:
-        vertex.visited = False
-        vertex.prev = None 
-      q.push(maze.start)
-      while q.isEmpty() != True:
-        current = q.pop()
-        if current.visited == True:
+    elif alg == 'BFS': #if the algorithm to solve the maze is BFS
+      for vertex in maze.adjList: #for all the vertices in the adjacentlist of the maze
+        vertex.visited = False #set the visited flag as false as no vertex has been visited till now
+        vertex.prev = None  #set the previous vertex as None, as there is no path 
+
+      q.push(maze.start) #push the start vertex object of the maze into our queue
+      while q.isEmpty() != True: #While the queue is not empty
+        current = q.pop() #Get the current vertex
+        if current.visited == True: #continue with the next iteration if the vertex has been visited
           continue
-        current.visited = True
-        #path.append(current.rank)
+        current.visited = True #else set the vertex visited flag as true
+    
+       #look at all the nieghbours of the current vertex
         for neighbor in current.neigh:
-          if neighbor.visited != True:
-            q.push(neighbor)
-            neighbor.prev = current    
+          if neighbor.visited != True:  #if the neighbours have not been visted 
+            q.push(neighbor)  #push it to the queue
+            neighbor.prev = current    #update the tracking path
       
       #Once Traversals complete, start from exit and backtrace to start.
-      node = maze.exit   
-      while node.isEqual(maze.start) != True:
-        bfs_path.insert(0,node.rank)
-        node = node.prev
+      node = maze.exit    #Start from the exit vertex object and reach back to start
+      while node.isEqual(maze.start) != True: #While we haven't reached the start of the maze
+        bfs_path.insert(0,node.rank) #keep on inserting the noderanks in the bfs_path
+        node = node.prev #update the node to reach the start vertex
       bfs_path.insert(0,node.rank)
             
-
+    #return the  desired path depending upon the algorithm
     if alg == 'BFS':
       return bfs_path
     elif alg == 'DFS':
@@ -151,23 +154,27 @@ class Stack:
     push function to push a value onto the stack.
     """
     def push(self, val):
-        ##### IMPLEMENT! #####
-        if self.isFull() == True:
-            self.resize()
-        self.top += 1
-        self.stack[self.top] = val
-        self.numElems += 1
+        ##### IMPLEMENT! #####   
+        if self.isFull() == True:  #if the stack  is full
+            self.resize()  #resize the stack
+        else:
+            self.top += 1  #increment the index of the top element
+            self.stack[self.top] = val #insert the element to be pushed at the top index
+            self.numElems += 1 #increase the number of elements the stack has
 
     """
     pop function to pop the value off the top of the stack. Returns popped value.
     """
     def pop(self):
         ##### IMPLEMENT! #####
-        if self.isEmpty() != True:
-            curr = self.stack[self.top]
-            self.stack[self.top] = None
-            self.top -= 1
-            self.numElems -= 1
+
+        if self.isEmpty() != True: #if the stack is not empty
+            curr = self.stack[self.top] #store the element to be popped as current
+            self.stack[self.top] = None #Set the previous top element as None
+            self.top -= 1 #decrement the index of the top element
+            self.numElems -= 1 #decrement the number of elements
+        else:
+            curr = None
         return curr
 
 ################################################################################
@@ -246,23 +253,26 @@ class Queue:
     """
     def push(self, val):
         ##### IMPLEMENT! #####
-        if self.isFull() == True:
-            self.resize()
-        self.queue[self.rear] = val
-        self.rear = (self.rear+1)%len(self.queue)
-        self.numElems += 1        
-        return
+        if self.isFull() == True:  #if the queue is full
+            self.resize() #resize the queue
+        else:
+            self.queue[self.rear] = val  #Set the value at the rear index to current val
+            self.rear = (self.rear+1)%len(self.queue) #Change the rear index 
+            self.numElems += 1        #increase the number of elements in the queue
+
 
     """
     pop function to pop the value from the front of the queue.
     """
     def pop(self):
         ##### IMPLEMENT! #####
-        if self.isEmpty() != True:
-            curr = self.queue[self.front]
-            self.queue[self.front] = None
-            self.front = (self.front+1)%len(self.queue)
-            self.numElems -= 1
+        if self.isEmpty() != True:  #if the queue is not empty
+            curr = self.queue[self.front] #the element to be popped is at the front index
+            self.queue[self.front] = None #set the value to be None at the front index
+            self.front = (self.front+1)%len(self.queue) #change the front index
+            self.numElems -= 1 #decrement the number of elements
+        else:
+            curr = None
         return curr
 
 ################################################################################
@@ -539,6 +549,7 @@ class Maze:
     """
     def solve(self, alg, verbosity=False):
         self.path = bdfs(self, alg)
+        #print(self.path)
         if len(self.path) == 0:
             print('Maze not solved!\n')
         self.verb = verbosity
@@ -634,32 +645,39 @@ def getMaze(mazeNum=0):
 testMazes function will test all of the mazes.
 """
 def testMazes(verbosity=True):
+    
     m = Maze(0,verbosity)
-    #m.printList()
-    #m.printMat()
-
     print('Testing Maze 0, DFS')
     m.solve('DFS',verbosity)
     print('Testing Maze 0, BFS')
     m.solve('BFS',verbosity)
+
     m = Maze(1,verbosity)
     print('Testing Maze 1, DFS')
     m.solve('DFS',verbosity)
     print('Testing Maze 1, BFS')
     m.solve('BFS',verbosity)
+
     m = Maze(2,verbosity)
     print('Testing Maze 2, DFS')
     m.solve('DFS',verbosity)
     print('Testing Maze 2, BFS')
     m.solve('BFS',verbosity)
+
     m = Maze(3,verbosity)
     print('Testing Maze 3, DFS')
     m.solve('DFS',verbosity)
     print('Testing Maze 3, BFS')
     m.solve('BFS',verbosity)
+    
     return
 
 ################################################################################
 
-
+#Test the algorithms bdfs:
 testMazes()
+
+printf("Testing done")
+
+
+
