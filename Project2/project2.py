@@ -4,7 +4,7 @@ Project 2
 Fall 2018
 
 Partner1: Rijish Ganguly rg239
-Partner2: Jonti Talukdar jt29
+Partner2: Jonti Talukdar jt292
 Date: November 16th, 2018
 """
 
@@ -29,7 +29,7 @@ def bdfs(maze, alg):
         raise Exception('Incorrect alg! Need BFS or DFS!')
 
     ##### Your implementation goes here. #####
-    s = Stack() #Create a stack for D
+    s = Stack() #Create a stack for DFS
     q = Queue() #Create a Queue for BFS
     dfs_path = [] #Create an empty list to store the path for DFS
     bfs_path = [] #Create an empty list to store the path for BFS
@@ -89,7 +89,7 @@ def bdfs(maze, alg):
       return bfs_path
     elif alg == 'DFS':
       return dfs_path
-    ##### Your implementation goes here. #####
+  
 
 ################################################################################
 
@@ -549,7 +549,7 @@ class Maze:
     """
     def solve(self, alg, verbosity=False):
         self.path = bdfs(self, alg)
-        #print(self.path)
+        print(self.path)
         if len(self.path) == 0:
             print('Maze not solved!\n')
         self.verb = verbosity
@@ -677,7 +677,7 @@ def testMazes(verbosity=True):
 #Test the algorithms bdfs:
 testMazes()
 
-printf("Testing done")
+print("Testing done")
 
 
 
