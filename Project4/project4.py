@@ -4,8 +4,8 @@ Project 4
 Fall 2018
 
 Partner 1: Rijish Ganguly (rg239)
-Partner 2:
-Date:
+Partner 2: Jonti Talukdar (jt292)
+Date: 
 """
 
 # Import math.
@@ -14,28 +14,31 @@ import math
 ################################################################################
 
 """
-Prim's Algorithm
+Prim's Algorithm 
 """
 def prim(adjList, adjMat):
     ##### Your implementation goes here. #####
-    for vertex in adjList:
-        vertex.cost = math.inf
-        vertex.prev = None
-        vertex.visited = False 
 
-    start = adjList[0];
-    start.cost = 0
+    for vertex in adjList:  #for every vertex in the adjacency list
+        vertex.cost = math.inf  #set cost to inf
+        vertex.prev = None      #set previous vertex to None
+        vertex.visited = False  #Mark all of the vertices as unvisited
 
-    Q = MinQueue(adjList)
+    start = adjList[0]; #Pick an arbitrary vertex to start
+    start.cost = 0      #set the cost of the starting vertex to be zero
 
-    while (Q.isEmpty() == False):
-        v = Q.deleteMin()
+    Q = MinQueue(adjList) # Make the priority queue using the adjList
+
+    while (Q.isEmpty() == False): #While the Queue is not empty
+        v = Q.deleteMin()   #Get the next unvisited vertex and visit it.
         v.visited = True
-        for neighbor in v.neigh:
-            if(neighbor.visited == False):
-                if neighbor.cost > adjMat[v.rank][neighbor.rank]:
-                    neighbor.cost = adjMat[v.rank][neighbor.rank]
-                    neighbor.prev = v
+
+        for neighbor in v.neigh:  #For every neighbour of v
+            # If the edge leads out, update.
+            if(neighbor.visited == False):  
+                if neighbor.cost > adjMat[v.rank][neighbor.rank]: # if the cost of the neighbour is greater than the weight(v, neighbor)
+                    neighbor.cost = adjMat[v.rank][neighbor.rank] #update the cost of the neighbour
+                    neighbor.prev = v #set the previous vertex of the neighbour
 
 
     return
@@ -49,18 +52,23 @@ Note: Use the isEqual method of the Vertex class when comparing vertices.
 """
 def kruskal(adjList, edgeList):
     ##### Your implementation goes here. #####
+    # edgeList is sorted, hence we don't need to sort again
+
+    # Initialize all singleton sets for each vertex
     for vertex in adjList:
         makeset(vertex)
+    # Initialize the empty MST
     X = []
-
+    #Loop through the edges in increasing order.
     for e in edgeList:
         u = e.vertices[0]
         v = e.vertices[1]
+         #If the min edge crosses a cut, add it to our MST.
         if (find(u).isEqual(find(v)) == False):
-            X.append(e)
-            union(u,v)
+            X.append(e) #Add to our MST
+            union(u,v) #Call the union operation on the two vertices
 
-    return X
+    return X # Return the MST
 
 ################################################################################
 
@@ -69,28 +77,28 @@ TSP
 """
 def tsp(adjList, start):
     ##### Your implementation goes here. #####
-    tour = []
-    stack = []
+    tour = []  #To keep track of TSP tour path
+    stack = [] #Stack Data Structure used for DFS
 
-    for vertex in adjList:                
-        vertex.visited = False                               
+    for vertex in adjList:      #For every vertex in the adjacency list           
+        vertex.visited = False     #Mark the vertices as unvisited                          
     
-    stack.append(start)
+    stack.append(start)  #Append to the stack the provided start vertex
   
 
-    while len(stack) != 0:                 
-        current = stack.pop()                   
-        if current.visited == True:         
-            continue 
-        current.visited = True 
-        tour.append(current.rank)
+    while len(stack) != 0:         #While the stack is not empty
+        current = stack.pop()      #Get the current vertex             
+        if current.visited == True:   #If the boolean flag of the current vertex is already true      
+            continue  #go to next iteration
+        current.visited = True #Mark the node as visited
+        tour.append(current.rank) #Add it to the TSP tour path
     
-        for neighbor in current.mstN: 
-          if neighbor.visited != True: 
+        for neighbor in current.mstN: #For all the neighbouring vertices of the current vertex object
+          if neighbor.visited != True: #if the neighbours haven't been visited yet
             #tour.append(neighbor.rank)
-            stack.append(neighbor)
-    tour.append(start.rank)
-    return tour
+            stack.append(neighbor)  #Push neighbour onto the stack
+    tour.append(start.rank) #The tour ends at the start, hence add it to the tour list
+    return tour #Return TSP tour 
 
 ################################################################################
 
@@ -109,8 +117,9 @@ makeset: this function will create a singleton set with root v.
 """
 def makeset(v):
     ##### Your implementation goes here. #####
-    v.pi = v
-    v.height = 0
+    #create a singleton set containing vertex v
+    v.pi = v  #Set the parent of v as itself
+    v.height = 0 #Set the height of v as 0
     return
 
 """
@@ -120,9 +129,12 @@ Note: Use the isEqual method of the Vertex class when comparing vertices.
 """
 def find(v):
     ##### Your implementation goes here. #####
+    # If we are not at the root.
     if(v.isEqual(v.pi) == False):
+        # Set our parent to be the root,
+        # which is also the root of our parent
         v.pi = find(v.pi)
-
+    # Return the root, which is now our parent
     return v.pi
 
 """
@@ -131,19 +143,24 @@ Note: Use the isEqual method of the Vertex class when comparing vertices.
 """
 def union(u,v):
     ##### Your implementation goes here. #####
+    # Find the root of the tree for u
+    # Find the root of the tree for v.
+
     ru = find(u)
     rv = find(v)
 
+    # If the sets are already the same, return.
     if(ru.isEqual(rv)):
         return
-
+    # Make shorter set point to taller set.
     if (ru.height > rv.height):
         rv.pi = ru
     elif ru.height < rv.height:
         ru.pi = rv
     else:
+        # Same height, break tie.
         ru.pi = rv
-        rv.height += 1
+        rv.height += 1 #increase the height as the tree got taller
 
     return
 
